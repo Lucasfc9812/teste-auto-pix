@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pagamento PIX</title>
+
+<style>
+
+body{
+font-family: Arial, Helvetica, sans-serif;
+background:#f2f2f2;
+text-align:center;
+padding:40px;
+}
+
+h1{
+margin-bottom:30px;
+}
+
+.buttons{
+display:grid;
+grid-template-columns:repeat(5,90px);
+gap:15px;
+justify-content:center;
+margin-bottom:30px;
+}
+
+button{
+padding:15px;
+font-size:18px;
+border:none;
+border-radius:8px;
+background:#16a085;
+color:white;
+cursor:pointer;
+}
+
+button:hover{
+background:#13856b;
+}
+
+#pix-box{
+display:none;
+margin-top:30px;
+background:white;
+padding:25px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+#qrcode{
+width:220px;
+margin-top:20px;
+}
+
+.pixcode{
+margin-top:15px;
+word-break:break-all;
+font-size:14px;
+background:#eee;
+padding:10px;
+border-radius:6px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Escolha o valor para pagar</h1>
+
+<div class="buttons">
+
+<button onclick="gerarPix(5)">5</button> <button onclick="gerarPix(10)">10</button> <button onclick="gerarPix(15)">15</button> <button onclick="gerarPix(20)">20</button> <button onclick="gerarPix(25)">25</button>
+
+<button onclick="gerarPix(30)">30</button> <button onclick="gerarPix(35)">35</button> <button onclick="gerarPix(40)">40</button> <button onclick="gerarPix(45)">45</button> <button onclick="gerarPix(50)">50</button>
+
+</div>
+
+<div id="pix-box">
+
+<h2 id="valor"></h2>
+
+<img id="qrcode">
+
+<div class="pixcode" id="pixcode"></div>
+
+</div>
+
+<script>
+
+const API_KEY = "a5yjm8a9dizg9aziqinqn8cdjq37jrnsdyihrhj0xc87d35k5gus6kv1rxfwtb02"
+
+async function gerarPix(valor){
+
+document.getElementById("valor").innerText = "Pagamento de R$ " + valor
+
+try{
+
+const response = await fetch("https://app.sigilopay.com.br/api/pix",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer " + API_KEY
+},
+
+body:JSON.stringify({
+amount: valor
+})
+
+})
+
+const data = await response.json()
+
+document.getElementById("pix-box").style.display="block"
+
+document.getElementById("qrcode").src = data.qrcode
+
+document.getElementById("pixcode").innerText = data.pix
+
+}catch(e){
+
+alert("Erro ao gerar PIX")
+
+console.log(e)
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>
